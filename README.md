@@ -12,7 +12,7 @@ Nothing fancy, no 3rd party libraries necessary.
 
 ### Notes
 - Starting credits for each player is 10
-- Can bet maximum of all credits (go all in!)
+- Dealer stays on soft 17
 - Game ends when there are <25% of original deck left, or all players are broke
 
 
