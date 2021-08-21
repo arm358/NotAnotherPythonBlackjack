@@ -5,7 +5,7 @@
 Nothing fancy, no 3rd party libraries necessary. 
 
 ### Usage
-1. python3 blackjack.py
+1. `python3 blackjack.py`
 2. Enter names of all players separated by a comma
 3. Enter number of decks to play with
 4. Good luck!
