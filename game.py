@@ -76,31 +76,34 @@ class Game:
         Automates dealer action. Dealer has different rules than players. Must hit until 17 is achieved.
         Dealer does NOT hit soft 17.
         """
-        finished = False
-        for player in self.players:
-            if not player.dealer:
-                continue
-            else:
-                print(f"------------------------------------")
-                print(f"{player.name}")
-                print(f"Cards: {player.cards} | Current total: {player.card_total()}")
-                while not finished:
-                    if any(i == 21 for i in player.card_total()):
-                        print("Dealer blackjack!")
-                        finished = True
-                        player.blackjack = True
-                    elif all(i > 21 for i in player.card_total()):
-                        print("Dealer busts!")
-                        finished = True
-                        player.bust = True
-                    elif any(i >= 17 and i <= 21 for i in player.card_total()):
-                        print("Dealer stays.")
-                        finished = True
-                    else:
-                        player.cards.append(self.deck[0])
-                        self.deck.pop(0)
-                        print(f"Cards: {player.cards} | Current total: {player.card_total()}")
-                    time.sleep(1)
+        if all(player.bust or not player.bet_flag for player in self.players if not player.dealer):
+            print("All players busted! Dealer stays")
+        else:
+            finished = False
+            for player in self.players:
+                if not player.dealer:
+                    continue
+                else:
+                    print(f"------------------------------------")
+                    print(f"{player.name}")
+                    print(f"Cards: {player.cards} | Current total: {player.card_total()}")
+                    while not finished:
+                        if any(i == 21 for i in player.card_total()):
+                            print("Dealer blackjack!")
+                            finished = True
+                            player.blackjack = True
+                        elif all(i > 21 for i in player.card_total()):
+                            print("Dealer busts!")
+                            finished = True
+                            player.bust = True
+                        elif any(i >= 17 and i <= 21 for i in player.card_total()):
+                            print("Dealer stays.")
+                            finished = True
+                        else:
+                            player.cards.append(self.deck[0])
+                            self.deck.pop(0)
+                            print(f"Cards: {player.cards} | Current total: {player.card_total()}")
+                        time.sleep(1)
 
     def current_cards(self):
         """
@@ -144,7 +147,7 @@ class Game:
             if not player.dealer:
                 player_score = self.final_score(player.card_total())
                 if len(player.cards) == 2 and player.blackjack:
-                    player.payout = player.bed * 2
+                    player.payout = player.bet * 2
                     player.credits += player.payout
                 elif player.bust or player_score < dealer_score:
                     player.credits -= player.bet
@@ -152,9 +155,10 @@ class Game:
                     player.payout = player.bet
                     player.credits += player.bet
                     player.winner = True
-                else:
+                elif player_score == dealer_score and player_score > 0:
                     player.push = True
-                    player.credits = player.credits
+                else:
+                    pass
 
     def report_player_scores(self):
         """
