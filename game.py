@@ -1,4 +1,5 @@
 import time
+import json
 
 
 class Game:
@@ -36,7 +37,7 @@ class Game:
         continues to the next player.
         """
         for player in self.players:
-            if not player.dealer and player.bet_flag:
+            if not player.dealer and player.bet_flag == True:
                 accepted = False
                 print(f"------------------------------------")
                 print(f"{player.name}")
@@ -74,10 +75,10 @@ class Game:
     def dealer_action(self):
         """
         Automates dealer action. Dealer has different rules than players. Must hit until 17 is achieved.
-        Dealer does NOT hit soft 17.
+        Dealer does NOT hit soft 17. Dealer also does not hit if all players bust.
         """
-        if all(player.bust or not player.bet_flag for player in self.players if not player.dealer):
-            print("All players busted! Dealer stays")
+        if all(player.bust for player in self.players if not player.dealer):
+            print("All players busted! Dealer stays.")
         else:
             finished = False
             for player in self.players:
@@ -87,6 +88,7 @@ class Game:
                     print(f"------------------------------------")
                     print(f"{player.name}")
                     print(f"Cards: {player.cards} | Current total: {player.card_total()}")
+                    time.sleep(1)
                     while not finished:
                         if any(i == 21 for i in player.card_total()):
                             print("Dealer blackjack!")
@@ -155,10 +157,9 @@ class Game:
                     player.payout = player.bet
                     player.credits += player.bet
                     player.winner = True
-                elif player_score == dealer_score and player_score > 0:
-                    player.push = True
                 else:
-                    pass
+                    player.push = True
+                    player.credits = player.credits
 
     def report_player_scores(self):
         """

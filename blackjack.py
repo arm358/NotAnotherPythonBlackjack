@@ -1,6 +1,8 @@
 from deck import Deck
 from player import Player
 from game import Game
+import json
+import os
 
 
 def intial_inputs():
@@ -12,7 +14,7 @@ def intial_inputs():
     """
     participants_accepted = False
     decks_accepted = False
-    # Take player names as input
+    # Take the names of all players. 
     print("Please enter player names separated by a comma.")
     while participants_accepted == False:
         participants = input().replace(" ", "")
@@ -21,7 +23,6 @@ def intial_inputs():
             participants_accepted = True
         else:
             print("Please try again. Enter player names separated by a comma. Cannot use <Dealer> as a name!")
-    # Take number of games as input
     print("Please enter number of decks. Minimum of 1 deck required, maximum of 8")
     while decks_accepted == False:
         try:
@@ -30,13 +31,13 @@ def intial_inputs():
                 decks_accepted = True
             else:
                 print("Please try again. Enter number of decks. Min = 1 / Max = 8")
-        except ValueError:
+        except:
             print("Please try again. Enter number of decks.")
 
     return participants, deck_count
 
 
-def set_players(names):
+def set_players(names, scores):
     """
     Instantiate player classes for each player given in the inputs.
     Also instantiate another player class to act as the dealer with no credits.
@@ -44,7 +45,10 @@ def set_players(names):
     """
     players = []
     for player in names:
-        players.append(Player(player))
+        if player in scores:
+            players.append(Player(player, False, credits=scores[player]+10))
+        else:
+            players.append(Player(player, credits = 10))
     players.append(Player("Dealer", True, credits=0))
     return players
 
@@ -63,12 +67,23 @@ def game_ends(deck, players, deck_count):
 
 if __name__ == "__main__":
 
+    if os.path.isfile("running_scores.json") and os.stat("running_scores.json").st_size != 0:
+          with open("running_scores.json", "r") as file:
+            scores = json.load(file)
+    else:
+        scores = {}
     participants, deck_count = intial_inputs()
     deck = Deck(deck_count).shuffle()
-    players = set_players(participants)
+    players = set_players(participants, scores)
     game = Game(players, deck)
 
     while not game_ends(deck, players, deck_count):
         game.play()
+    
+    final_scores = {}
+    with open("running_scores.json", "w+") as outfile:
+        for player in players:
+            if not player.dealer: scores[player.name] = player.credits
+        json.dump(scores, outfile)
 
     print("Round over! Thanks for playing.")
