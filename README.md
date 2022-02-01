@@ -11,9 +11,9 @@ Nothing fancy, no 3rd party libraries necessary.
 4. Good luck!
 
 ### *Notes*
-- Starting credits for each player is 10
+- Starting credits for each player is 10, unless you already had credits saved from previous plays. In this case, 10 credits are added to your existing total.
 - Dealer stays on soft 17
 - Getting natural blackjack (first two cards) pays 2x bet -- no matter the dealer's hand.
-- Game ends when there are <25% of original deck left, or all players are broke
+- Game ends when there is <25% of original deck left, or all players are broke
 
 
